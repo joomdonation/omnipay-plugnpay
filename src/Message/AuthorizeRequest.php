@@ -4,7 +4,7 @@ namespace Omnipay\PlugNPay\Message;
 
 
 use Omnipay\Common\Exception\InvalidCreditCardException;
-use Guzzle\Http\Message\Response as GuzzleResponse;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class AuthorizeRequest
@@ -106,12 +106,12 @@ class AuthorizeRequest extends AbstractRequest
     /**
      * Instantiate a new AuthorizeResponse object which extends the Response object to add a few new functions.
      *
-     * @param \Guzzle\Http\Message\Response $httpResponse
+     * @param ResponseInterface $httpResponse
      *
      * @return \Omnipay\PlugNPay\Message\AuthorizeResponse
      */
-    public function generateResponse(GuzzleResponse $httpResponse)
+    public function generateResponse(ResponseInterface $httpResponse)
     {
-        return $this->response = new AuthorizeResponse($this, $httpResponse->getBody());
+        return $this->response = new AuthorizeResponse($this, $httpResponse->getBody()->getContents());
     }
 }

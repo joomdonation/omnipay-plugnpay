@@ -2,8 +2,8 @@
 
 namespace Omnipay\PlugNPay\Message;
 
-use Guzzle\Http\Message\Response as GuzzleResponse;
 use Omnipay\Common\Message\AbstractRequest as BaseAbstractRequest;
+use Psr\Http\Message\ResponseInterface;
 
 abstract class AbstractRequest extends BaseAbstractRequest
 {
@@ -58,13 +58,13 @@ abstract class AbstractRequest extends BaseAbstractRequest
     /**
      * Instantiate a new Response object with the data coming back from PlugNPay
      *
-     * @param \Guzzle\Http\Message\Response $httpResponse
+     * @param ResponseInterface $httpResponse
      *
      * @return \Omnipay\PlugNPay\Message\Response
      */
-    protected function generateResponse(GuzzleResponse $httpResponse)
+    protected function generateResponse(ResponseInterface $httpResponse)
     {
-        return $this->response = new Response($this, $httpResponse->getBody());
+        return $this->response = new Response($this, $httpResponse->getBody()->getContents());
     }
 
     /**
@@ -74,11 +74,12 @@ abstract class AbstractRequest extends BaseAbstractRequest
      */
     public function sendData($data)
     {
-        $httpResponse = $this->httpClient->post(
+        $httpResponse = $this->httpClient->request(
+            'POST',
             $this->getEndPoint(),
-            null,
+            [],
             http_build_query($data)
-        )->send();
+        );
 
         return $this->generateResponse($httpResponse);
     }
